@@ -15,3 +15,4 @@
 # vendor/
 run_adf.sh
 adf_trigger_cli
+.idea
