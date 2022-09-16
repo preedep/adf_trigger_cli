@@ -14,7 +14,7 @@ type ADFStatus string
 const (
 	SUCCESSES ADFStatus = "succeeded"
 	FAILED              = "failed"
-	CANCELED            = "canceled"
+	CANCELLED           = "cancelled"
 )
 
 type DataFactories struct {
@@ -56,7 +56,7 @@ func (d *DataFactories) RunPipeLine(pipeline_name string,
 				callback(status, message)
 			}
 			switch status {
-			case SUCCESSES, CANCELED:
+			case SUCCESSES, CANCELLED:
 				{
 					return nil
 				}
@@ -93,9 +93,7 @@ func (d *DataFactories) runPipelineClientCreateRun() (string, error) {
 			StartActivityName:      nil,
 			StartFromFailure:       nil,
 			Parameters: map[string]interface{}{
-				"OutputBlobNameList": []interface{}{
-					"exampleoutput.csv",
-				},
+				"data_file": "database.csv",
 			},
 		})
 	if err != nil {
