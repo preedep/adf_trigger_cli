@@ -12,6 +12,7 @@ func Execute() {
 	var resource_group string
 	var factory_name string
 	var pipeline_name string
+	var isrecovery bool
 
 	var versionCmd = &cobra.Command{
 		Use:   "version",
@@ -36,7 +37,7 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 			//fmt.Println(factory_name)
 			//fmt.Println(pipeline_name)
 			datafactories := azure.CreateDataFactories(subscription_id, resource_group, factory_name)
-			err := datafactories.RunPipeLine(pipeline_name, func(adfStatus azure.ADFStatus, s string) {
+			err := datafactories.RunPipeLine(pipeline_name, isrecovery, func(adfStatus azure.ADFStatus, s string) {
 				fmt.Printf("Run pipeline status : %v , message : %v\r\n", adfStatus, s)
 			})
 			if err != nil {
@@ -44,11 +45,11 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 			}
 		},
 	}
-
 	runCmd.Flags().StringVarP(&subscription_id, "subscription_id", "s", "", "Azure Subscription ID [*required]")
 	runCmd.Flags().StringVarP(&resource_group, "resource_group", "r", "", "Azure Resource Group [*required")
 	runCmd.Flags().StringVarP(&factory_name, "factory_name", "f", "", "Azure ADF Factory Name [*required]")
 	runCmd.Flags().StringVarP(&pipeline_name, "pipeline_name", "p", "", "Azure ADF Pipeline Name [*required]")
+	runCmd.Flags().BoolVarP(&isrecovery, "recovery", "c", false, "Azure ADF Pipeline try support recovery")
 
 	err := runCmd.MarkFlagRequired("subscription_id")
 	if err != nil {

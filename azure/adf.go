@@ -18,10 +18,11 @@ const (
 )
 
 type DataFactories struct {
-	subscriptionId string
-	resourceGroup  string
-	factoryName    string
-	pipelineName   string
+	subscriptionId   string
+	resourceGroup    string
+	factoryName      string
+	pipelineName     string
+	needRecoveryMode bool
 }
 
 func CreateDataFactories(
@@ -36,8 +37,12 @@ func CreateDataFactories(
 	}
 }
 
-func (d *DataFactories) RunPipeLine(pipeline_name string, callback func(ADFStatus /**/, string)) error {
+func (d *DataFactories) RunPipeLine(pipeline_name string,
+	recovery_mode bool,
+	callback func(ADFStatus /**/, string),
+) error {
 	d.pipelineName = pipeline_name
+	d.needRecoveryMode = recovery_mode
 	run_id, err := d.runPipelineClientCreateRun()
 	if err == nil {
 		fmt.Printf("Pipeline run id : %v\r\n", run_id)
@@ -82,10 +87,11 @@ func (d *DataFactories) runPipelineClientCreateRun() (string, error) {
 		d.resourceGroup,
 		d.factoryName,
 		d.pipelineName,
-		&armdatafactory.PipelinesClientCreateRunOptions{ReferencePipelineRunID: nil,
-			IsRecovery:        nil,
-			StartActivityName: nil,
-			StartFromFailure:  nil,
+		&armdatafactory.PipelinesClientCreateRunOptions{
+			ReferencePipelineRunID: nil,
+			IsRecovery:             &d.needRecoveryMode,
+			StartActivityName:      nil,
+			StartFromFailure:       nil,
 			Parameters: map[string]interface{}{
 				"OutputBlobNameList": []interface{}{
 					"exampleoutput.csv",
