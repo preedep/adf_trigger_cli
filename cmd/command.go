@@ -5,7 +5,6 @@ import (
 	"adf_trigger_cli/config"
 	"fmt"
 	"github.com/spf13/cobra"
-	"strings"
 )
 
 func Execute() {
@@ -35,18 +34,16 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 		Short: "Run ADF with specific pipeline",
 		Long:  `Run ADF with specific pipeline`,
 		Run: func(cmd *cobra.Command, args []string) {
-			//fmt.Println(subscription_id)
-			//fmt.Println(resource_group)
-			//fmt.Println(factory_name)
-			//fmt.Println(pipeline_name)
-			if len(strings.Trim(parameters, "")) > 0 {
-				_, err := config.ReadParametersFile(parameters)
-				if err != nil {
+			var p *config.Parameters = nil
+			var err error = nil
+			if len(parameters) > 0 {
+				p, err = config.ReadParametersFile(parameters)
+				if err == nil {
 					panic(err)
 				}
 			}
 			datafactories := azure.CreateDataFactories(subscription_id, resource_group, factory_name)
-			err := datafactories.RunPipeLine(pipeline_name, isrecovery, func(adfStatus azure.ADFStatus, s string) {
+			err = datafactories.RunPipeLine(pipeline_name, isrecovery, p, func(adfStatus azure.ADFStatus, s string) {
 				fmt.Printf("Run pipeline status : %v , message : %v\r\n", adfStatus, s)
 			})
 			if err != nil {

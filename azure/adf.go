@@ -1,6 +1,7 @@
 package azure
 
 import (
+	"adf_trigger_cli/config"
 	"context"
 	"errors"
 	"fmt"
@@ -39,11 +40,12 @@ func CreateDataFactories(
 
 func (d *DataFactories) RunPipeLine(pipeline_name string,
 	recovery_mode bool,
+	params *config.Parameters,
 	callback func(ADFStatus /**/, string),
 ) error {
 	d.pipelineName = pipeline_name
 	d.needRecoveryMode = recovery_mode
-	run_id, err := d.runPipelineClientCreateRun()
+	run_id, err := d.runPipelineClientCreateRun(params)
 	if err == nil {
 		fmt.Printf("Pipeline run id : %v\r\n", run_id)
 		for {
@@ -70,7 +72,7 @@ func (d *DataFactories) RunPipeLine(pipeline_name string,
 	return err
 }
 
-func (d *DataFactories) runPipelineClientCreateRun() (string, error) {
+func (d *DataFactories) runPipelineClientCreateRun(params *config.Parameters) (string, error) {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("failed azure credential %v", err))
