@@ -13,6 +13,7 @@ func Execute() {
 	var factory_name string
 	var pipeline_name string
 	var isrecovery bool
+	var parameters string
 
 	var versionCmd = &cobra.Command{
 		Use:   "version",
@@ -50,6 +51,7 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 	runCmd.Flags().StringVarP(&factory_name, "factory_name", "f", "", "Azure ADF Factory Name [*required]")
 	runCmd.Flags().StringVarP(&pipeline_name, "pipeline_name", "p", "", "Azure ADF Pipeline Name [*required]")
 	runCmd.Flags().BoolVarP(&isrecovery, "recovery", "c", false, "Azure ADF Pipeline try support recovery")
+	runCmd.Flags().StringVarP(&parameters, "parameter_file", "f", "", "Azure ADF Pipeline parameters")
 
 	err := runCmd.MarkFlagRequired("subscription_id")
 	if err != nil {
