@@ -115,5 +115,9 @@ func (d *DataFactories) waitForStatus(run_id string) (ADFStatus, error) {
 		err = errors.New(fmt.Sprintf("failed get status  %v", err))
 		return FAILED, err
 	}
-	return ADFStatus(strings.ToLower(*res.Status)), nil
+	status := ADFStatus(strings.ToLower(*res.Status))
+	if status != SUCCESSES {
+		err = errors.New(*res.Message)
+	}
+	return status, err
 }
