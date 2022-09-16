@@ -27,29 +27,29 @@ type DataFactories struct {
 }
 
 func CreateDataFactories(
-	subscription_id string,
-	resource_group string,
-	factory_name string,
+	subscriptionId string,
+	resourceGroup string,
+	factoryName string,
 ) DataFactories {
 	return DataFactories{
-		subscriptionId: subscription_id,
-		resourceGroup:  resource_group,
-		factoryName:    factory_name,
+		subscriptionId: subscriptionId,
+		resourceGroup:  resourceGroup,
+		factoryName:    factoryName,
 	}
 }
 
-func (d *DataFactories) RunPipeLine(pipeline_name string,
-	recovery_mode bool,
+func (d *DataFactories) RunPipeLine(pipelineName string,
+	recoveryMode bool,
 	params *config.Parameters,
 	callback func(ADFStatus /**/, string),
 ) error {
-	d.pipelineName = pipeline_name
-	d.needRecoveryMode = recovery_mode
-	run_id, err := d.runPipelineClientCreateRun(params)
+	d.pipelineName = pipelineName
+	d.needRecoveryMode = recoveryMode
+	runId, err := d.runPipelineClientCreateRun(params)
 	if err == nil {
-		fmt.Printf("Pipeline run id : %v\r\n", run_id)
+		fmt.Printf("Pipeline run id : %v\r\n", runId)
 		for {
-			status, err := d.waitForStatus(run_id)
+			status, err := d.waitForStatus(runId)
 			var message string = ""
 			if err != nil {
 				message = err.Error()
@@ -84,7 +84,12 @@ func (d *DataFactories) runPipelineClientCreateRun(params *config.Parameters) (s
 		err = errors.New(fmt.Sprintf("failed new pipeline client  %v", err))
 		return "", err
 	}
-
+	p := map[string]interface{}{}
+	if params != nil {
+		for _, v := range params.Params {
+			p[v.Key] = v.Value
+		}
+	}
 	res, err := client.CreateRun(ctx,
 		d.resourceGroup,
 		d.factoryName,
@@ -94,9 +99,7 @@ func (d *DataFactories) runPipelineClientCreateRun(params *config.Parameters) (s
 			IsRecovery:             &d.needRecoveryMode,
 			StartActivityName:      nil,
 			StartFromFailure:       nil,
-			Parameters: map[string]interface{}{
-				"data_file": "database.csv",
-			},
+			Parameters:             p,
 		})
 	if err != nil {
 		err = errors.New(fmt.Sprintf("failed run pipeline  %v", err))
@@ -104,7 +107,7 @@ func (d *DataFactories) runPipelineClientCreateRun(params *config.Parameters) (s
 	}
 	return *res.RunID, nil
 }
-func (d *DataFactories) waitForStatus(run_id string) (ADFStatus, error) {
+func (d *DataFactories) waitForStatus(runId string) (ADFStatus, error) {
 	cred, err := azidentity.NewDefaultAzureCredential(nil)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("failed credential  %v", err))
@@ -116,7 +119,7 @@ func (d *DataFactories) waitForStatus(run_id string) (ADFStatus, error) {
 		err = errors.New(fmt.Sprintf("failed new pipeline client  %v", err))
 		return FAILED, err
 	}
-	res, err := client.Get(ctx, d.resourceGroup, d.factoryName, run_id, nil)
+	res, err := client.Get(ctx, d.resourceGroup, d.factoryName, runId, nil)
 	if err != nil {
 		err = errors.New(fmt.Sprintf("failed get status  %v", err))
 		return FAILED, err

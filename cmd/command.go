@@ -38,7 +38,7 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 			var err error = nil
 			if len(parameters) > 0 {
 				p, err = config.ReadParametersFile(parameters)
-				if err == nil {
+				if err != nil {
 					panic(err)
 				}
 			}
