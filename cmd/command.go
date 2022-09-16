@@ -2,8 +2,10 @@ package cmd
 
 import (
 	"adf_trigger_cli/azure"
+	"adf_trigger_cli/config"
 	"fmt"
 	"github.com/spf13/cobra"
+	"strings"
 )
 
 func Execute() {
@@ -37,6 +39,12 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 			//fmt.Println(resource_group)
 			//fmt.Println(factory_name)
 			//fmt.Println(pipeline_name)
+			if len(strings.Trim(parameters, "")) > 0 {
+				_, err := config.ReadParametersFile(parameters)
+				if err != nil {
+					panic(err)
+				}
+			}
 			datafactories := azure.CreateDataFactories(subscription_id, resource_group, factory_name)
 			err := datafactories.RunPipeLine(pipeline_name, isrecovery, func(adfStatus azure.ADFStatus, s string) {
 				fmt.Printf("Run pipeline status : %v , message : %v\r\n", adfStatus, s)
@@ -51,7 +59,7 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 	runCmd.Flags().StringVarP(&factory_name, "factory_name", "f", "", "Azure ADF Factory Name [*required]")
 	runCmd.Flags().StringVarP(&pipeline_name, "pipeline_name", "p", "", "Azure ADF Pipeline Name [*required]")
 	runCmd.Flags().BoolVarP(&isrecovery, "recovery", "c", false, "Azure ADF Pipeline try support recovery")
-	runCmd.Flags().StringVarP(&parameters, "parameter_file", "f", "", "Azure ADF Pipeline parameters")
+	runCmd.Flags().StringVarP(&parameters, "parameter_file", "v", "", "Azure ADF Pipeline parameters")
 
 	err := runCmd.MarkFlagRequired("subscription_id")
 	if err != nil {
