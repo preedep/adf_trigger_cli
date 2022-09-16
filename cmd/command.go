@@ -45,10 +45,10 @@ Developed by Mr.Preedee Ponchevin copyright 2022`,
 		},
 	}
 
-	runCmd.Flags().StringVarP(&subscription_id, "subscription_id", "s", "", "Azure Subscription ID")
-	runCmd.Flags().StringVarP(&resource_group, "resource_group", "r", "", "Azure Resource Group")
-	runCmd.Flags().StringVarP(&factory_name, "factory_name", "f", "", "Azure ADF Factory Name")
-	runCmd.Flags().StringVarP(&pipeline_name, "pipeline_name", "p", "", "Azure ADF Pipeline Name")
+	runCmd.Flags().StringVarP(&subscription_id, "subscription_id", "s", "", "Azure Subscription ID [*required]")
+	runCmd.Flags().StringVarP(&resource_group, "resource_group", "r", "", "Azure Resource Group [*required")
+	runCmd.Flags().StringVarP(&factory_name, "factory_name", "f", "", "Azure ADF Factory Name [*required]")
+	runCmd.Flags().StringVarP(&pipeline_name, "pipeline_name", "p", "", "Azure ADF Pipeline Name [*required]")
 
 	err := runCmd.MarkFlagRequired("subscription_id")
 	if err != nil {
