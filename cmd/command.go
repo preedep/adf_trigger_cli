@@ -21,13 +21,13 @@ func Execute() {
 		Short: "Print the version number of ADF Trigger CLI",
 		Long:  `All software has versions. This is ADF Trigger CLI's`,
 		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Println("ADF Trigger CLI Tools v1.0 -- HEAD")
+			fmt.Println("ADF Trigger CLI Tools v1.0")
 		},
 	}
 	var rootCmd = &cobra.Command{Use: "app",
 		Short: "ADF Trigger CLI Tools for remote run ADF pipeline",
 		Long: `ADF Trigger CLI Tools for remote run ADF pipeline.
-Developed by Mr.Preedee Ponchevin copyright 2022`,
+				Developed by Mr.Preedee Ponchevin copyright 2022`,
 	}
 
 	var runCmd = &cobra.Command{Use: "run [run ADF pipeline]",
